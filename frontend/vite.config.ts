@@ -5,8 +5,8 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     proxy: {
-      '/files': 'http://localhost:8000',
-      '/folders': 'http://localhost:8000'
+      '/files': 'http://127.0.0.1:8000',
+      '/folders': 'http://127.0.0.1:8000'
     },
     // ARMアーキテクチャでの互換性向上
     hmr: {

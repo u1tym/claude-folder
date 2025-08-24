@@ -7,8 +7,8 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3000,
     proxy: {
-      '/files': 'http://localhost:8000',
-      '/folders': 'http://localhost:8000'
+      '/files': 'http://127.0.0.1:8000',
+      '/folders': 'http://127.0.0.1:8000'
     },
     // ARMアーキテクチャでの互換性向上
     hmr: {
