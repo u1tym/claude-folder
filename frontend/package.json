@@ -4,7 +4,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:arm": "NODE_OPTIONS='--max-old-space-size=512' vite --config vite.config.arm.ts",
+    "dev:legacy": "NODE_OPTIONS='--max-old-space-size=512 --no-experimental-fetch' vite --config vite.config.arm.ts",
     "build": "vue-tsc && vite build",
+    "build:arm": "NODE_OPTIONS='--max-old-space-size=512' vue-tsc && vite build --config vite.config.arm.ts",
     "preview": "vite preview"
   },
   "dependencies": {
