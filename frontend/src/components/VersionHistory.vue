@@ -101,16 +101,20 @@
               </div>
             </div>
 
-            <div v-if="version.operation !== 'delete'" class="ml-4 flex-shrink-0">
+            <div class="ml-4 flex-shrink-0">
               <button
                 @click="downloadVersion(version.version)"
-                class="inline-flex items-center px-3 py-1.5 border border-transparent
-                       text-sm font-medium rounded-md text-white bg-blue-600
-                       hover:bg-blue-700 focus:outline-none focus:ring-2
-                       focus:ring-offset-2 focus:ring-blue-500"
+                :class="[
+                  'inline-flex items-center px-3 py-1.5 border border-transparent',
+                  'text-sm font-medium rounded-md focus:outline-none focus:ring-2',
+                  'focus:ring-offset-2',
+                  version.operation === 'delete'
+                    ? 'text-white bg-red-600 hover:bg-red-700 focus:ring-red-500'
+                    : 'text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'
+                ]"
               >
                 <ArrowDownTrayIcon class="h-4 w-4 mr-1.5" />
-                ダウンロード
+                {{ version.operation === 'delete' ? '削除版をダウンロード' : 'ダウンロード' }}
               </button>
             </div>
           </div>
@@ -145,6 +149,7 @@ import type { FileVersion } from '../types'
 interface Props {
   show: boolean
   filename: string
+  folderId?: number
 }
 
 const props = defineProps<Props>()
@@ -160,7 +165,7 @@ const loadVersions = async () => {
 
   loading.value = true
   try {
-    const response = await fileApi.getFileVersions(props.filename)
+    const response = await fileApi.getFileVersions(props.filename, props.folderId)
     versions.value = response.versions
   } catch (error) {
     console.error('バージョン履歴の取得に失敗:', error)
@@ -172,7 +177,7 @@ const loadVersions = async () => {
 
 const downloadVersion = async (version: number) => {
   try {
-    await fileApi.downloadFile(props.filename, version)
+    await fileApi.downloadFile(props.filename, version, props.folderId)
   } catch (error) {
     console.error('ダウンロードに失敗:', error)
     alert('ダウンロードに失敗しました')

@@ -31,7 +31,7 @@
       <div class="grid grid-cols-12 gap-6">
         <!-- フォルダ管理 -->
         <div class="col-span-3">
-          <FolderManager 
+          <FolderManager
             ref="folderManagerRef"
             @select-folder="onFolderSelect"
           />
@@ -39,9 +39,9 @@
 
         <div class="col-span-9 space-y-8">
           <!-- ファイルアップロード -->
-          <FileUpload 
+          <FileUpload
             :folder-id="selectedFolderId"
-            @uploaded="onFileUploaded" 
+            @uploaded="onFileUploaded"
           />
 
           <!-- ファイル一覧 -->
@@ -59,6 +59,7 @@
     <VersionHistory
       :show="versionHistory.show"
       :filename="versionHistory.filename"
+      :folder-id="selectedFolderId"
       @close="closeVersionHistory"
     />
 
@@ -182,11 +183,12 @@ const hideNotification = () => {
   }
 }
 
-const showVersionHistory = (filename: string) => {
+const showVersionHistory = (filename: string, folderId?: number) => {
   versionHistory.value = {
     show: true,
     filename
   }
+  // folderIdはVersionHistoryコンポーネントに渡す必要がある場合は追加
 }
 
 const closeVersionHistory = () => {

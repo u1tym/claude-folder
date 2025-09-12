@@ -57,8 +57,10 @@ export const fileApi = {
   },
 
   // ファイル削除
-  async deleteFile(filename: string, memo?: string): Promise<UploadResponse> {
-    const params = memo ? { memo } : undefined
+  async deleteFile(filename: string, memo?: string, folderId?: number): Promise<UploadResponse> {
+    const params: any = {}
+    if (memo) params.memo = memo
+    if (folderId !== undefined) params.folder_id = folderId
     const response = await fileApiClient.delete<UploadResponse>(`/${filename}`, { params })
     return response.data
   },

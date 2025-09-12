@@ -42,11 +42,13 @@
           <div class="flex-1 min-w-0">
             <div class="flex items-center space-x-3">
               <div class="flex-shrink-0">
-                <DocumentIcon class="h-8 w-8 text-gray-400" />
+                <DocumentIcon v-if="file.latest_operation !== 'delete'" class="h-8 w-8 text-gray-400" />
+                <TrashIcon v-else class="h-8 w-8 text-red-400" />
               </div>
               <div class="flex-1 min-w-0">
-                <p class="text-lg font-medium text-gray-900 truncate">
+                <p class="text-lg font-medium truncate" :class="file.latest_operation === 'delete' ? 'text-red-600 line-through' : 'text-gray-900'">
                   {{ file.filename }}
+                  <span v-if="file.latest_operation === 'delete'" class="ml-2 text-sm text-red-500">(削除済み)</span>
                 </p>
                 <div class="flex items-center space-x-4 text-sm text-gray-500">
                   <span>v{{ file.latest_version }}</span>
@@ -71,7 +73,7 @@
 
           <div class="flex items-center space-x-2 ml-4">
             <button
-              @click="$emit('showVersions', file.filename)"
+              @click="$emit('showVersions', file.filename, file.folder_id)"
               class="inline-flex items-center px-3 py-1.5 border border-gray-300
                      text-sm font-medium rounded-md text-gray-700 bg-white
                      hover:bg-gray-50 focus:outline-none focus:ring-2
@@ -82,15 +84,18 @@
             </button>
 
             <button
-              v-if="file.latest_operation !== 'delete'"
               @click="downloadFile(file.filename)"
-              class="inline-flex items-center px-3 py-1.5 border border-transparent
-                     text-sm font-medium rounded-md text-white bg-blue-600
-                     hover:bg-blue-700 focus:outline-none focus:ring-2
-                     focus:ring-offset-2 focus:ring-blue-500"
+              :class="[
+                'inline-flex items-center px-3 py-1.5 border border-transparent',
+                'text-sm font-medium rounded-md focus:outline-none focus:ring-2',
+                'focus:ring-offset-2',
+                file.latest_operation === 'delete'
+                  ? 'text-white bg-red-600 hover:bg-red-700 focus:ring-red-500'
+                  : 'text-white bg-blue-600 hover:bg-blue-700 focus:ring-blue-500'
+              ]"
             >
               <ArrowDownTrayIcon class="h-4 w-4 mr-1.5" />
-              ダウンロード
+              {{ file.latest_operation === 'delete' ? '削除版をダウンロード' : 'ダウンロード' }}
             </button>
 
             <button
@@ -175,7 +180,7 @@ import { fileApi } from '../api'
 import type { FileInfo } from '../types'
 
 const emit = defineEmits<{
-  showVersions: [filename: string]
+  showVersions: [filename: string, folderId?: number]
   deleted: [filename: string]
 }>()
 
@@ -212,7 +217,7 @@ watch(() => props.initialFolderId, () => {
 
 const downloadFile = async (filename: string) => {
   try {
-    await fileApi.downloadFile(filename)
+    await fileApi.downloadFile(filename, undefined, props.initialFolderId || undefined)
   } catch (error) {
     console.error('ダウンロードに失敗:', error)
   }
@@ -241,9 +246,10 @@ const confirmDelete = async () => {
   try {
     await fileApi.deleteFile(
       deleteModal.value.filename,
-      deleteModal.value.memo.trim() || undefined
+      deleteModal.value.memo.trim() || undefined,
+      props.initialFolderId || undefined
     )
-    
+
     emit('deleted', deleteModal.value.filename)
     closeDeleteModal()
     await loadFiles() // リストを更新
