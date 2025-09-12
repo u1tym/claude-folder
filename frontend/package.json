@@ -4,21 +4,24 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:arm": "NODE_OPTIONS='--max-old-space-size=512' vite --config vite.config.arm.ts",
+    "dev:legacy": "NODE_OPTIONS='--max-old-space-size=512 --no-experimental-fetch' vite --config vite.config.arm.ts",
     "build": "vue-tsc && vite build",
+    "build:arm": "NODE_OPTIONS='--max-old-space-size=512' vue-tsc && vite build --config vite.config.arm.ts",
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.4.15",
+    "@heroicons/vue": "^2.0.18",
     "axios": "^1.6.0",
-    "@heroicons/vue": "^2.0.18"
+    "vue": "^3.4.15"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.0.3",
-    "typescript": "^5.2.2",
-    "vue-tsc": "^1.8.25",
-    "vite": "^5.0.8",
-    "tailwindcss": "^3.4.0",
+    "@vitejs/plugin-vue": "^4.5.0",
     "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.32"
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.2.2",
+    "vite": "^4.5.0",
+    "vue-tsc": "^1.8.25"
   }
 }
