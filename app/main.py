@@ -224,10 +224,18 @@ async def download_file(
     # データベースからファイルコンテンツを取得してストリーミングレスポンスで返す
     file_stream = BytesIO(file_content)
 
+    # 日本語ファイル名を適切にエンコード
+    import urllib.parse
+    encoded_filename = urllib.parse.quote(filename.encode('utf-8'))
+    
+    headers = {
+        "Content-Disposition": f"attachment; filename*=UTF-8''{encoded_filename}"
+    }
+
     return StreamingResponse(
         file_stream,
         media_type=file_version.mime_type or "application/octet-stream",
-        headers={"Content-Disposition": f"attachment; filename={filename}"}
+        headers=headers
     )
 
 if __name__ == "__main__":
